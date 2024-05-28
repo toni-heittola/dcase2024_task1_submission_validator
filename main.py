@@ -44,37 +44,128 @@ def main(argv):
                 }
             },
             'system': {
-                'required_fields': ['description', 'complexity', 'energy_consumption', 'external_datasets', 'source_code'],
+                'required_fields': ['description', 'complexity', 'external_datasets', 'source_code'],
                 'description': {
-                    'required_fields': ['input_sampling_rate', 'acoustic_features', 'embeddings', 'data_augmentation', 'machine_learning_method', 'ensemble_method_subsystem_count', 'decision_making', 'external_data_usage', 'complexity_management', 'pipeline', 'framework'],
+                    'required_fields': [
+                        'input_sampling_rate',
+                        'acoustic_features',
+                        'data_augmentation',
+                        'machine_learning_method',
+                        'external_data_usage',
+                        'complexity_management',
+                        'pipeline',
+                        'framework',
+                        'split_adaptations',
+                        'system_adaptations'
+                    ],
                 },
                 'complexity': {
-                    'required_fields': ['total_model_size', 'total_parameters', 'total_parameters_non_zero', 'memory_use', 'macs']
-                },
-                'energy_consumption': {
-                    'required_fields': ['training', 'inference', 'baseline_inference']
+                    'required_fields': [
+                        'total_model_size',
+                        'total_parameters',
+                        'macs'
+                    ]
                 },
                 'external_datasets': {
-                    'required_fields': ['name', 'url', 'total_audio_length']
+                    'required_fields': [
+                        'name',
+                        'url',
+                        'total_audio_length'
+                    ]
                 }
             },
             'results': {
                 'required_fields': ['development_dataset'],
                 'development_dataset': {
-                    'required_fields': ['overall', 'class_wise', 'device_wise'],
-                    'overall': {
-                        'required_fields': ['accuracy', 'logloss'],
-                    },
-                    'class_wise': {
-                        'required_fields': ['airport', 'shopping_mall', 'metro_station', 'street_pedestrian',
-                                            'public_square', 'street_traffic', 'tram', 'bus', 'metro', 'park'],
-                        'required_fields_per_item': ['accuracy', 'logloss']
+                    'required_fields': [
+                        'split_5',
+                        'split_10',
+                        'split_25',
+                        'split_50',
+                        'split_100',
 
+
+                    ],
+                    'split_5': {
+                        'required_fields': ['overall','class_wise','device_wise'],
+                        'overall': {
+                            'required_fields': ['accuracy', 'logloss'],
+                        },
+                        'class_wise': {
+                            'required_fields': ['airport', 'shopping_mall', 'metro_station', 'street_pedestrian',
+                                                'public_square', 'street_traffic', 'tram', 'bus', 'metro', 'park'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+
+                        },
+                        'device_wise': {
+                            'required_fields': ['a', 'b', 'c', 's1', 's2', 's3', 's4', 's5', 's6'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+                        }
                     },
-                    'device_wise': {
-                        'required_fields': ['a', 'b', 'c', 's1', 's2', 's3', 's4', 's5', 's6'],
-                        'required_fields_per_item': ['accuracy', 'logloss']
-                    }
+                    'split_10': {
+                        'required_fields': ['overall', 'class_wise', 'device_wise'],
+                        'overall': {
+                            'required_fields': ['accuracy', 'logloss'],
+                        },
+                        'class_wise': {
+                            'required_fields': ['airport', 'shopping_mall', 'metro_station', 'street_pedestrian',
+                                                'public_square', 'street_traffic', 'tram', 'bus', 'metro', 'park'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+
+                        },
+                        'device_wise': {
+                            'required_fields': ['a', 'b', 'c', 's1', 's2', 's3', 's4', 's5', 's6'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+                        }
+                    },
+                    'split_25': {
+                        'required_fields': ['overall', 'class_wise', 'device_wise'],
+                        'overall': {
+                            'required_fields': ['accuracy', 'logloss'],
+                        },
+                        'class_wise': {
+                            'required_fields': ['airport', 'shopping_mall', 'metro_station', 'street_pedestrian',
+                                                'public_square', 'street_traffic', 'tram', 'bus', 'metro', 'park'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+
+                        },
+                        'device_wise': {
+                            'required_fields': ['a', 'b', 'c', 's1', 's2', 's3', 's4', 's5', 's6'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+                        }
+                    },
+                    'split_50': {
+                        'required_fields': ['overall', 'class_wise', 'device_wise'],
+                        'overall': {
+                            'required_fields': ['accuracy', 'logloss'],
+                        },
+                        'class_wise': {
+                            'required_fields': ['airport', 'shopping_mall', 'metro_station', 'street_pedestrian',
+                                                'public_square', 'street_traffic', 'tram', 'bus', 'metro', 'park'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+
+                        },
+                        'device_wise': {
+                            'required_fields': ['a', 'b', 'c', 's1', 's2', 's3', 's4', 's5', 's6'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+                        }
+                    },
+                    'split_100':{
+                        'required_fields': ['overall', 'class_wise', 'device_wise'],
+                        'overall': {
+                            'required_fields': ['accuracy', 'logloss'],
+                        },
+                        'class_wise': {
+                            'required_fields': ['airport', 'shopping_mall', 'metro_station', 'street_pedestrian',
+                                                'public_square', 'street_traffic', 'tram', 'bus', 'metro', 'park'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+
+                        },
+                        'device_wise': {
+                            'required_fields': ['a', 'b', 'c', 's1', 's2', 's3', 's4', 's5', 's6'],
+                            'required_fields_per_item': ['accuracy', 'logloss']
+                        }
+                    },
                 }
             }
         }
@@ -135,6 +226,7 @@ def main(argv):
                 for submission_label in task_files[subtask]:
                     print('Validate [{subtask:} -> {submission_label:}]'.format(subtask=subtask, submission_label=submission_label))
                     print('------------------------------------------------------')
+
                     for output_filename_fullpath in task_files[subtask][submission_label]['output']:
                         output_filename = os.path.split(output_filename_fullpath)[-1]
 
@@ -144,7 +236,7 @@ def main(argv):
                             output = file.read()
 
                         # Check data
-                        error_count += validate_output(data=output.decode("utf-8"), param=param['output'])
+                        error_count += validate_output(data=output.decode("utf-8"), param=param['output'], csv_filename=output_filename)
 
                     print('')
 
@@ -174,7 +266,11 @@ def main(argv):
 
                     # Check data
                     error_count += validate_meta_data(meta, subtask, param['meta'])
-                    error_count += validate_submission_label(output_filename, meta_filename, meta['submission']['label'])
+
+                    for output_filename_fullpath in task_files[subtask][submission_label]['output']:
+                        output_filename = os.path.split(output_filename_fullpath)[-1]
+
+                        error_count += validate_submission_label(output_filename, meta_filename, meta['submission']['label'])
 
                     if submission_label != meta['submission']['label']:
                         print_error('label', 'Submission label used in the dir/filenames and meta information differs [{submission_label:} != {submission_label_meta:}]'.format(

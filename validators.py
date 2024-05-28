@@ -9,16 +9,19 @@ import os
 from io import StringIO
 
 
-def print_error(error_type, message):
+def print_error(error_type, message=None, filename=None):
     if isinstance(message, list):
         for line_id, line in enumerate(message):
             if line_id == 0:
-                print('  [{type:6s}]    {message:s}'.format(type=error_type.upper(), message=line))
+                print('  [{type:6s}]  {message:s}'.format(type=error_type.upper(), message=line))
             else:
                 print('               {message:s}'.format(message=line))
 
     else:
-        print('  [{type:6s}]    {message:}'.format(type=error_type.upper(), message=message))
+        if filename:
+            print('  [{type:6s}]  [{filename:10s}]  {message:}'.format(type=error_type.upper(), message=message, filename=filename))
+        else:
+            print('  [{type:6s}]  {message:}'.format(type=error_type.upper(), message=message))
 
 
 def validate_submission_label(output_filename, meta_filename, submission_label):
@@ -42,7 +45,7 @@ def validate_submission_label(output_filename, meta_filename, submission_label):
     return error_count
 
 
-def validate_output(data, param):
+def validate_output(data, param, csv_filename=None):
     error_count = 0
 
     f = StringIO(data)
@@ -51,12 +54,14 @@ def validate_output(data, param):
 
     # Check that headers exists
     if 'filename' not in csv_fields:
-        print_error('output', 'No header row in output file')
+        print_error('output', 'No header row in output file', csv_filename)
 
     # Check field names
     if check_fields(csv_fields, param['fields']):
-        print_error('output', ['Errors in header fields in the output file', 'Correct header fields are [{fields:}]'.format(
-            fields=','.join(param['fields']))]
+        print_error('output',
+                    ['Errors in header fields in the output file', 'Correct header fields are [{fields:}]'.format(
+                        fields=','.join(param['fields']))],
+                    csv_filename
         )
         error_count += 1
 
@@ -74,9 +79,11 @@ def validate_output(data, param):
         row_filename = os.path.split(row[filename_index])[-1]
 
         if row_filename in file_index:
-            print_error('output', 'Duplicate file [{filename:}] at row [{row_id:}]'.format(
-                filename=row[filename_index],
-                row_id=row_id + 1)
+            print_error('output',
+                        'Duplicate file [{filename:}] at row [{row_id:}]'.format(
+                            filename=row[filename_index],
+                            row_id=row_id + 1),
+                        csv_filename
             )
             error_count += 1
 
@@ -84,35 +91,47 @@ def validate_output(data, param):
             file_index.append(row_filename)
 
         if os.path.splitext(row_filename)[-1] != '.wav':
-            print_error('output', 'Wrong file extension for file [{filename:}] at row [{row_id:}] (use \'.wav\')'.format(
-                filename=row[filename_index],
-                row_id=row_id + 1)
+            print_error('output',
+                        'Wrong file extension for file [{filename:}] at row [{row_id:}] (use \'.wav\')'.format(
+                            filename=row[filename_index],
+                            row_id=row_id + 1),
+                        csv_filename
             )
             error_count += 1
 
         if int(os.path.splitext(row_filename)[0]) > param['filename']['index_max']:
-            print_error('output', 'Illegal filename [{filename:}] at row [{row_id:}] (file index too large)'.format(
-                filename=row[filename_index],
-                row_id=row_id + 1)
+            print_error('output',
+                        'Illegal filename [{filename:}] at row [{row_id:}] (file index too large)'.format(
+                            filename=row[filename_index],
+                            row_id=row_id + 1),
+                        csv_filename
             )
             error_count += 1
 
         elif int(os.path.splitext(row_filename)[0]) < param['filename']['index_min']:
-            print_error('output', 'Illegal filename [{filename:}] at row [{row_id:}] (file index too small)'.format(
-                filename=row[filename_index],
-                row_id=row_id + 1)
+            print_error('output',
+                        'Illegal filename [{filename:}] at row [{row_id:}] (file index too small)'.format(
+                            filename=row[filename_index],
+                            row_id=row_id + 1),
+                        csv_filename
             )
             error_count += 1
 
         if len(row) != len(param['fields']):
-            print_error('output', 'Wrong field count at row [{row_id:}]'.format(row_id=row_id + 1))
+            print_error('output',
+                        csv_filename,
+                        'Wrong field count at row [{row_id:}]'.format(row_id=row_id + 1),
+                        csv_filename
+            )
             error_count += 1
 
         if scene_label_index and row[scene_label_index] not in param['scene_labels']:
-            print_error('output', 'Use of illegal scene label [{scene_label:}] at row [{row_id:}]'.format(
-                scene_label=row[scene_label_index],
-                row_id=row_id + 1)
-            )
+            print_error('output',
+                        'Use of illegal scene label [{scene_label:}] at row [{row_id:}]'.format(
+                            scene_label=row[scene_label_index],
+                            row_id=row_id + 1),
+                        csv_filename
+                        )
             error_count += 1
 
         for field in param['fields_float']:
@@ -120,17 +139,21 @@ def validate_output(data, param):
             if index < len(row):
                 current_value = row[csv_fields.index(field)]
                 if not is_float(current_value):
-                    print_error('output', 'Wrong field type at row [{row_id:}] for field [{field:}={value:}]'.format(
-                        row_id=row_id + 1,
-                        field=field,
-                        value=current_value)
+                    print_error('output',
+                                'Wrong field type at row [{row_id:}] for field [{field:}={value:}]'.format(
+                                    row_id=row_id + 1,
+                                    field=field,
+                                    value=current_value),
+                                csv_filename
                     )
                     error_count += 1
 
     if len(file_index) != param['unique_file_count']:
-        print_error('output', 'Incorrect number of outputted entries [{count:} != {target:}] (unique filenames counted)'.format(
-            count=len(file_index),
-            target=param['unique_file_count'])
+        print_error('output',
+                    'Incorrect number of outputted entries [{count:} != {target:}] (unique filenames counted)'.format(
+                        count=len(file_index),
+                        target=param['unique_file_count']),
+                    csv_filename
         )
         error_count += 1
 
