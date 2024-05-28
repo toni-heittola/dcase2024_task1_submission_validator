@@ -135,21 +135,21 @@ def main(argv):
                 for submission_label in task_files[subtask]:
                     print('Validate [{subtask:} -> {submission_label:}]'.format(subtask=subtask, submission_label=submission_label))
                     print('------------------------------------------------------')
+                    for output_filename_fullpath in task_files[subtask][submission_label]['output']:
+                        output_filename = os.path.split(output_filename_fullpath)[-1]
 
-                    output_filename = os.path.split(task_files[subtask][submission_label]['output'])[-1]
-                    meta_filename = os.path.split(task_files[subtask][submission_label]['meta'])[-1]
+                        # Load output data
+                        print(' Output file: [{filename}]'.format(filename=output_filename))
+                        with z.open(output_filename_fullpath, 'r') as file:
+                            output = file.read()
 
-                    # Load output data
-                    print(' Output file: [{filename}]'.format(filename=task_files[subtask][submission_label]['output']))
-                    with z.open(task_files[subtask][submission_label]['output'], 'r') as file:
-                        output = file.read()
-
-                    # Check data
-                    error_count += validate_output(data=output.decode("utf-8"), param=param['output'])
+                        # Check data
+                        error_count += validate_output(data=output.decode("utf-8"), param=param['output'])
 
                     print('')
 
                     # Load meta data
+                    meta_filename = os.path.split(task_files[subtask][submission_label]['meta'])[-1]
                     print(' Meta file:   [{filename}]'.format(filename=task_files[subtask][submission_label]['meta']))
                     try:
                         with z.open(task_files[subtask][submission_label]['meta'], 'r') as infile:
